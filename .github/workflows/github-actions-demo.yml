@@ -25,3 +25,5 @@ jobs:
       - name: List files in the repository
         run: |
           ls -la ${{ github.workspace }}
+      - name: Check version of php
+        run: php --version
