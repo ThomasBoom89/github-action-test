@@ -1,5 +1,7 @@
 {
   "name": "thomas/github-action-test",
+  "description": "test project for github actions",
+  "license": "MIT",
   "autoload": {
     "psr-4": {
       "Thomas\\GithubActionTest\\": "src/"
