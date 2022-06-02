@@ -52,6 +52,9 @@ jobs:
       - name: Run phpmd/phpmd
         run: ${{ github.workspace }}/vendor/bin/phpmd ${{ github.workspace }}/src text cleancode,codesize,controversial,design,naming,unusedcode
 
+      - name: Run phpstan/phpstan
+        run: ${{ github.workspace }}/vendor/bin/phpstan analyse --level 9 ${{ github.workspace }}/src
+
   Tests:
     name: "Tests"
     strategy:

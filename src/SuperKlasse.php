@@ -17,7 +17,6 @@ class SuperKlasse
 
     public function unused()
     {
-        $unused = null;
         return 2;
     }
 }
