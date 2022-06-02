@@ -1,9 +1,8 @@
 name: Github Actions Demo
 on:
   pull_request:
-    branches: [ main ]
   push:
-    branches: [ main ]
+
 jobs:
   Explore-Gihub-Actions:
     runs-on: ubuntu-latest
@@ -21,8 +20,34 @@ jobs:
           ls -la ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
 
-  Build:
-    name: "Build"
+  codestyle:
+    name: "Codestyle"
+    strategy:
+      matrix:
+        php-version:
+          - "8.1"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.php-version }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: "Run squizlabs/php_codesniffer"
+        run: ${{ github.workspace }}/vendor/bin/phpcs --standard=psr12 ${{ github.workspace }}/src
+
+  Tests:
+    name: "Tests"
     strategy:
       max-parallel: 2
       matrix:
