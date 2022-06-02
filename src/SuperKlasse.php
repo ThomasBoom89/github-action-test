@@ -15,7 +15,7 @@ class SuperKlasse
         return $number + 10;
     }
 
-    public function unused()
+    public function unused(): int
     {
         return 2;
     }

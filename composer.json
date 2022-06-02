@@ -1,6 +1,6 @@
 {
   "name": "thomas/github-action-test",
-  "description": "test project for github actions",
+  "description": "Test project for github actions",
   "license": "MIT",
   "autoload": {
     "psr-4": {
@@ -13,7 +13,9 @@
       "email": "51998416+ThomasBoom89@users.noreply.github.com"
     }
   ],
-  "require": {},
+  "require": {
+    "php": "^8.0"
+  },
   "require-dev": {
     "phpunit/phpunit": "^9.5.20",
     "squizlabs/php_codesniffer": "^3.6.2",
