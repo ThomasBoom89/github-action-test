@@ -63,4 +63,4 @@ jobs:
           ls -la ${{ github.workspace }}
 
       - name: Run tests with phpunit/phpunit
-        run: ./tools/phpunit --configuration ${{ github.workspace }}/phpunit.xml --coverage-clover=coverage.xml
+        run: ${{ github.workspace }}/vendor/bin/phpunit --configuration ${{ github.workspace }}/phpunit.xml --coverage-clover=coverage.xml
