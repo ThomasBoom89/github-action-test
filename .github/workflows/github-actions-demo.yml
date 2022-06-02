@@ -1,7 +1,8 @@
 name: Github Actions Demo
 on:
   pull_request:
-    branches: [ $default-branch ]
+  push:
+
 jobs:
   Explore-Gihub-Actions:
     runs-on: ubuntu-latest
@@ -19,9 +20,81 @@ jobs:
           ls -la ${{ github.workspace }}
       - run: echo "🍏 This job's status is ${{ job.status }}."
 
-  Build:
+  codestyle:
+    name: "Codestyle"
+    strategy:
+      matrix:
+        php-version:
+          - "8.1"
     runs-on: ubuntu-latest
     steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.php-version }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
+      - name: Run squizlabs/php_codesniffer
+        run: ${{ github.workspace }}/vendor/bin/phpcs --standard=psr12 ${{ github.workspace }}/src
+
+      - name: Run phpmd/phpmd
+        run: ${{ github.workspace }}/vendor/bin/phpmd ${{ github.workspace }}/src text cleancode,codesize,controversial,design,naming,unusedcode
+
+      - name: Run phpstan/phpstan
+        run: ${{ github.workspace }}/vendor/bin/phpstan analyse --level 9 ${{ github.workspace }}/src
+
+  Tests:
+    name: "Tests"
+    strategy:
+      max-parallel: 2
+      matrix:
+        php-version:
+          - "8.0"
+          - "8.1"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+
+      - name: Install PHP with extensions
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: xdebug
+
+      - name: Check version of php
+        run: php --version
+
+      - name: Validate composer.json and composer.lock
+        run: composer validate --strict
+
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: ${{ runner.os }}-${{ matrix.php-version }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.php-version }}-composer-
+
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress
+
       - name: List files in the repository
         run: |
           ls -la ${{ github.workspace }}
+
+      - name: Run tests with phpunit/phpunit
+        run: ${{ github.workspace }}/vendor/bin/phpunit --configuration ${{ github.workspace }}/phpunit.xml --coverage-clover=coverage.xml
