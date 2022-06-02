@@ -13,6 +13,11 @@ class SuperKlasse
     public function calculate(int $number): int
     {
         return $number + 10;
+    }
 
+    public function unused()
+    {
+        $unused = null;
+        return 2;
     }
 }

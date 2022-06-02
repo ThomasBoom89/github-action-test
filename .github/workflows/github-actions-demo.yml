@@ -46,8 +46,11 @@ jobs:
       - name: Install dependencies
         run: composer install --prefer-dist --no-progress
 
-      - name: "Run squizlabs/php_codesniffer"
+      - name: Run squizlabs/php_codesniffer
         run: ${{ github.workspace }}/vendor/bin/phpcs --standard=psr12 ${{ github.workspace }}/src
+
+      - name: Run phpmd/phpmd
+        run: ${{ github.workspace }}/vendor/bin/phpmd ${{ github.workspace }}/src text cleancode,codesize,controversial,design,naming,unusedcode
 
   Tests:
     name: "Tests"
