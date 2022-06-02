@@ -1,6 +1,8 @@
 name: Github Actions Demo
 on:
-  pull_request: [ $default-branch ]
+  pull_request:
+    branches:
+      - $default-branch
 jobs:
   Explore-Gihub-Actions:
     runs-on: ubuntu-latest
